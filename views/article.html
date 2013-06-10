@@ -1,0 +1,27 @@
+<h3>{{article.title}}</h3>
+
+{{#if article.sourceauthor}}
+Original Author: {{article.sourceauthor}}<br/>
+{{/if}}
+
+{{#if article.sourceurl}}
+Original Location: {{article.sourceurl}}<br/>
+{{/if}}
+
+{{article.body}}
+
+<p/>
+
+<pre><code>{{article.code}}</code></pre>
+
+
+<p>
+{{#if article.tags}}
+tags:
+<ul>
+	{{#each article.tags}}
+	<li>{{.}}</li>
+	{{/each}}
+</ul>
+{{/if}}
+</p>

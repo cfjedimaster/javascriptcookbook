@@ -49,11 +49,11 @@ app.get('/about', function(req, res) {
 });
 
 //Todo: Secure
-app.get('/article/new', function(req, res) {
+app.get('/article/new', secure, function(req, res) {
     res.render('articlenew', { title: "New Article" });    
 });
 
-app.post('/article/new', function(req, res) {
+app.post('/article/new', secure, function(req, res) {
     articleProvider.save({
         title:req.param('title'), 
         body:req.param('body'),

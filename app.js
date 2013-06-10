@@ -11,6 +11,8 @@ hbs.registerHelper('urlFormat',function(input) {
 	return hbs.handlebars.Utils.escapeExpression(input);
 });
 
+var fs = require('fs');
+
 app.configure(function() {
     app.set('view engine', 'html');
     app.engine('html', hbs.__express);
@@ -40,6 +42,10 @@ app.get('/', function(req,res) {
 			res.render('index',{articles:data,homepage:true,tags:tags});
 		});
 	});
+});
+
+app.get('/about', function(req, res) {
+    res.render('about', { title: "JavaScript Cookbook: About" });    
 });
 
 //Todo: Secure
@@ -82,4 +88,52 @@ app.get('/tag/:tag', function(req, res) {
 	});
 });
 
-app.listen(3000);
+app.get('/login', function(req, res) {
+    if(req.session.error) {
+        res.locals.error = req.session.error;
+        delete req.session.error;
+    }
+    res.render('login',{title:"Admin Login"});		
+});
+
+app.post('/login', function(req, res) {
+	if(authenticate(req.body.username, req.body.password)) {
+		req.session.regenerate(function() {
+			req.session.loggedin=true;
+			res.redirect('/admin');
+		});
+	} else {
+		req.session.error = 'Invalid login.';        
+		res.redirect('/login');
+	}
+});
+
+app.get('/admin', secure, function(req, res) {
+	res.render('admin', {title:'Admin'});	
+});
+
+function authenticate(username, password) {
+	return (username === app.get('adminusername') && password === app.get('adminpassword'));
+}
+
+function secure(req, res, next) {    
+    if(req.session.loggedin) {
+        next();   
+    } else {
+        res.redirect('/login');
+    }
+}
+
+/*
+Do a file read to get JSON config for admin credentials
+*/
+fs.readFile('./adminauth.json', 'utf8', function(err, data) {
+	if(err) {
+		process.exit(1);	
+	}
+	data = JSON.parse(data);
+	app.set('adminusername', data.username);
+	app.set('adminpassword', data.password);
+	app.listen(3000);
+});
+

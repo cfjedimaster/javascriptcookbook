@@ -22,11 +22,9 @@
 	<div class="span4">
 		<ul class="nav nav-list well">
 			<li class="nav-header">Tags</li>
-			<li >
-			<a href="#">Home</a>
-			</li>
-			<li><a href="#">...</a></li>
-			<li><a href="#">...</a></li>
+			{{#each tags}}
+				<li><a href="/tag/{{urlFormat .}}">{{.}}</a></li>
+			{{/each}}
 		</ul>		
 	</div>
 	

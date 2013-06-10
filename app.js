@@ -7,6 +7,9 @@ var articleProvider = new ArticleProvider('localhost',27017);
 var hbs = require('hbs');
 var hbHelpers = require('./hbHelpers');
 hbs.registerHelper('dateFormat',hbHelpers.dateFormat);
+hbs.registerHelper('urlFormat',function(input) {
+	return hbs.handlebars.Utils.escapeExpression(input);
+});
 
 app.configure(function() {
     app.set('view engine', 'html');
@@ -29,9 +32,14 @@ app.locals({
 });
 
 app.get('/', function(req,res) {
-    articleProvider.findLatest(5,function(err, data) {
-        res.render('index',{articles:data,homepage:true});
-    });
+	/*
+	Tiny bit of callback hell here (callback heck?)
+	*/
+	articleProvider.getTags(function(err, tags) {
+		articleProvider.findLatest(5,function(err, data) {
+			res.render('index',{articles:data,homepage:true,tags:tags});
+		});
+	});
 });
 
 //Todo: Secure
@@ -63,14 +71,15 @@ app.get('/article/:id', function(req, res) {
 
 app.get('/article/:ses', function(req, res) {
 	articleProvider.findBySES(req.params.ses, function(error, article) {
-		res.render('article', {article:article, title:article.title});
+		res.render('article', {article:article, title:"JavaScript Cookbook: " + article.title});
 	});
 });
 
 
-app.get('/tags', function(req, res) {
-	articleProvider.getTags(function(error, tags) {
-		res.send(JSON.stringify(tags));
+app.get('/tag/:tag', function(req, res) {
+	articleProvider.findByTag(req.params.tag, function(error, articles) {
+		res.render('tag', {articles:articles,title:"JavaScript Cookbook: Tag - "+req.params.tag, tag:req.params.tag});
 	});
 });
+
 app.listen(3000);

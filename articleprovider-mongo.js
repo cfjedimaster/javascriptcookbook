@@ -68,6 +68,19 @@ ArticleProvider.prototype.findBySES = function(ses, callback) {
 		}
 	});
 };
+
+ArticleProvider.prototype.findByTag = function(tag, callback) {
+	this.getCollection(function(error, article_collection) {
+		if( error ) callback(error)
+		else {
+			article_collection.find({tags: tag}).toArray(function(error, results) {
+				if( error ) callback(error)
+				else callback(null, results)
+			});
+		}
+	});
+};
+
 ArticleProvider.prototype.findLatest = function(max,callback) {
 	this.getCollection(function(error, article_collection) {
 		if( error ) callback(error)

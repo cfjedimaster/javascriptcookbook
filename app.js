@@ -178,6 +178,19 @@ app.post('/login', function(req, res) {
 	}
 });
 
+app.post('/search', function(req, res) {
+	var term = req.param('search');
+	//do some basic escaping
+	term = term.replace(/[^a-z0-9 ]/g, "");
+	
+	if(term === '') res.redirect('/');
+	
+	articleProvider.findBySearch(term, function(error, articles) {
+		res.render('search', {articles:articles,title:"JavaScript Cookbook: Search", term:term});		
+	});
+	
+});
+
 app.get('/admin', secure, function(req, res) {
 	res.render('admin', {title:'Admin'});	
 });

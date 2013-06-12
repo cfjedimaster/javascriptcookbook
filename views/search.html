@@ -1,0 +1,10 @@
+
+<h3>Search </h3>
+
+<p>Here are the results of your search for <strong>{{term}}</strong></p>
+
+{{#each articles}}
+<p>
+<a href="/article/{{sesURL}}">{{title}}</a> - {{dateFormat created_at}}
+</p>
+{{/each}}

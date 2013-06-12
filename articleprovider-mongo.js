@@ -69,6 +69,18 @@ ArticleProvider.prototype.findBySES = function(ses, callback) {
 	});
 };
 
+ArticleProvider.prototype.findBySearch = function(term, callback) {
+	this.getCollection(function(error, article_collection) {
+		if( error ) callback(error)
+		else {
+			var reg = new RegExp(term,"i");
+			article_collection.find({$or:[{title: reg},{body:reg}]}).toArray(function(error, results) {				if( error ) callback(error)
+				else callback(null, results)
+			});
+		}
+	});
+};
+
 ArticleProvider.prototype.findByTag = function(tag, callback) {
 	this.getCollection(function(error, article_collection) {
 		if( error ) callback(error)

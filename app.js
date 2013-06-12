@@ -11,6 +11,8 @@ hbs.registerHelper('urlFormat',function(input) {
 	return hbs.handlebars.Utils.escapeExpression(input);
 });
 
+var nodemailer = require('nodemailer');
+
 var fs = require('fs');
 
 app.configure(function() {
@@ -76,14 +78,82 @@ app.get('/article/:id', function(req, res) {
 */
 
 app.get('/article/:ses', function(req, res) {
-	articleProvider.findBySES(req.params.ses, function(error, article) {
+	articleProvider.findBySES(req.param('ses'), function(error, article) {
 		res.render('article', {article:article, title:"JavaScript Cookbook: " + article.title});
 	});
 });
 
+app.get('/submit', function(req, res) {
+    res.render('submit', { title: "JavaScript Cookbook: Submit" });
+});
+
+app.get('/submitted', function(req, res) {
+    res.render('submitted', { title: "JavaScript Cookbook: Submitted" });
+});
+
+app.post('/submit', function(req, res) {
+	var title = req.param('title');
+	var body = req.param('body');
+	var code = req.param('code');
+	var sourceauthor = req.param('sourceauthor');
+	var sourceurl = req.param('sourceurl');
+	var yourname = req.param('yourname');
+	var youremail = req.param('youremail')
+	var tags = req.param('tags');
+
+	//We have client-side validation, but validate here too for lame browsers
+	if(title === '' || body === '' || code === '' || yourname === '' || youremail === '') {
+		req.session.error = 'You must include the title, description, code, your name and email address.';
+		res.redirect('/submit');
+	}
+	console.log(app.get('mailusername'), app.get('mailpassword'));
+	var transport = nodemailer.createTransport("SMTP", {
+		service: 'Gmail', // use well known service
+			auth: {
+				user: app.get('mailusername'),
+				pass: app.get('mailpassword')
+			}
+	});
+
+	var message = {
+	
+		// sender info
+		from: '"' + yourname +'" <' + youremail +'>',
+	
+		// Comma separated list of recipients
+		to: '"Raymond Camden" <raymondcamden@gmail.com>',
+	
+		// Subject of the message
+		subject: 'JavaScript Cookbook Submission', //
+	
+		text: "Title: "+title + "\n" +
+		"Body: "+body + "\n\n" + 
+		"Code: "+code + "\n\n" + 
+		"Source Author: " + sourceauthor + "\n" +
+		"Source URL: " + sourceurl + "\n" + 
+		"Submitter Name: " + yourname + "\n" + 
+		"Submitter Email: " + youremail + "\n"
+	
+	};	
+
+	transport.sendMail(message, function(error){
+		if(error){
+			console.log('Error occured');
+			console.log(error.message);
+			return;
+		}
+		console.log('Message sent successfully!');
+
+		// if you don't want to use this transport object anymore, uncomment following line
+		transport.close(); // close the connection pool
+		
+		res.redirect('/submitted');
+	});
+
+});
 
 app.get('/tag/:tag', function(req, res) {
-	articleProvider.findByTag(req.params.tag, function(error, articles) {
+	articleProvider.findByTag(req.param('tag'), function(error, articles) {
 		res.render('tag', {articles:articles,title:"JavaScript Cookbook: Tag - "+req.params.tag, tag:req.params.tag});
 	});
 });
@@ -97,7 +167,7 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res) {
-	if(authenticate(req.body.username, req.body.password)) {
+	if(authenticate(req.param('username'), req.param('password'))) {
 		req.session.regenerate(function() {
 			req.session.loggedin=true;
 			res.redirect('/admin');
@@ -134,6 +204,8 @@ fs.readFile('./adminauth.json', 'utf8', function(err, data) {
 	data = JSON.parse(data);
 	app.set('adminusername', data.username);
 	app.set('adminpassword', data.password);
+	app.set('mailusername', data.mailusername);
+	app.set('mailpassword', data.mailpassword);
 	app.listen(3000);
 });
 

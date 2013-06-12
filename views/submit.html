@@ -1,0 +1,110 @@
+<script>
+$(document).ready(function() {
+	$("#submitForm").on("submit", function(e) {
+		var errors = [];
+		var title = $.trim($("#title").val());
+		var body = $.trim($("#body").val());
+		var code = $.trim($("#code").val());
+		var yourname = $.trim($("#yourname").val());
+		var youremail = $.trim($("#youremail").val());
+		
+		if(yourname === "") errors.push("You must include your name.");
+		if(youremail === "") errors.push("You must include your email address.");
+		if(title === "") errors.push("You must include a title.");
+		if(body === "") errors.push("You must include a description.");
+		if(code === "") errors.push("You must include the code for the article.");
+		
+		if(errors.length !== 0) {
+			e.preventDefault();
+			var s = "Please correct these errors:<br/>";
+			for(var i=0; i<errors.length; i++) {
+				s+= errors[i] + "<br/>";
+			}
+			$("#formstatus").html(s).addClass("alert alert-error");
+		}
+	});
+});
+</script>
+
+<h3>Submit an Article</h3>
+
+<p>
+All article submissions will be emailed to the site administrator for editing before they
+are published to the site.
+</p>
+
+<div id="formstatus"></div>
+
+{{#if error}}
+	<div class="alert alert-error">
+	{{error}}
+	</div>
+{{/if}}
+
+<form class="form-horizontal" id="submitForm" method="post">
+	<fieldset>
+
+		<div class="control-group">
+			<label class="control-label" for="yourname">Your Name</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="yourname" name="yourname">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="youremail">Your Email</label>
+			<div class="controls">
+				<input type="email" class="input-xlarge" id="youremail" name="youremail">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="title">Title</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="title" name="title">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="body">Description</label>
+			<div class="controls">
+				<textarea class="input-xlarge" id="body" name="body" rows="3"></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="code">Code</label>
+			<div class="controls">
+				<textarea class="input-xlarge" id="code" name="code" rows="3"></textarea>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="sourceauthor">Source Author</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="sourceauthor" name="sourceauthor">
+				<p class="help-block">If you are contributing content from someone else, include their name.</p>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="sourceurl">Source URL</label>
+			<div class="controls">
+				<input type="url" class="input-xlarge" id="sourceurl" name="sourceurl">
+				<p class="help-block">If you are contributing content from someone else, include the URL.</p>
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="tags">Tags</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="tags" name="tags">
+				<p class="help-block">Include a comma-separated list of tags.</p>
+			</div>
+		</div>
+		
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary">Submit Article</button>
+		</div>
+	</fieldset>
+</form>

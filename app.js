@@ -219,6 +219,6 @@ fs.readFile('./adminauth.json', 'utf8', function(err, data) {
 	app.set('adminpassword', data.password);
 	app.set('mailusername', data.mailusername);
 	app.set('mailpassword', data.mailpassword);
-	app.listen(3000);
+	app.listen(process.env.VCAP_APP_PORT || 3000);
 });
 

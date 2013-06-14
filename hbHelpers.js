@@ -1,6 +1,6 @@
 exports.dateFormat = function(input) {
 	var d = new Date(input);
-	return d.getMonth() + '/' + d.getDate() + '/'+ d.getFullYear() + ' at ' + d.getHours() + ':' + ((d.getMinutes()<10)?"0"+d.getMinutes():d.getMinutes());
+	return (d.getMonth()+1) + '/' + d.getDate() + '/'+ d.getFullYear() + ' at ' + d.getHours() + ':' + ((d.getMinutes()<10)?"0"+d.getMinutes():d.getMinutes());
 }
 
 /*

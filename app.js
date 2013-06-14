@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 
 var ArticleProvider = require('./articleprovider-mongo').ArticleProvider;
-var articleProvider = new ArticleProvider('localhost',27017);
+app.set('articleProvider',new ArticleProvider('localhost',27017));
 
 var hbs = require('hbs');
 var hbHelpers = require('./hbHelpers');
@@ -10,6 +10,9 @@ hbs.registerHelper('dateFormat',hbHelpers.dateFormat);
 hbs.registerHelper('urlFormat',function(input) {
 	return hbs.handlebars.Utils.escapeExpression(input);
 });
+
+//Load routes
+var admin = require('./routes/admin');
 
 var nodemailer = require('nodemailer');
 
@@ -39,8 +42,8 @@ app.get('/', function(req,res) {
 	/*
 	Tiny bit of callback hell here (callback heck?)
 	*/
-	articleProvider.getTags(function(err, tags) {
-		articleProvider.findLatest(5,function(err, data) {
+	app.get('articleProvider').getTags(function(err, tags) {
+		app.get('articleProvider').findLatest(5,function(err, data) {
 			res.render('index',{articles:data,homepage:true,tags:tags});
 		});
 	});
@@ -50,35 +53,13 @@ app.get('/about', function(req, res) {
     res.render('about', { title: "JavaScript Cookbook: About" });    
 });
 
-//Todo: Secure
-app.get('/article/new', secure, function(req, res) {
-    res.render('articlenew', { title: "New Article" });    
-});
+app.get('/admin/edit/:id', secure, admin.articleedit);
+app.get('/admin/edit', secure, admin.articleedit);
+app.post('/admin/save', secure, admin.articlesave);
 
-app.post('/article/new', secure, function(req, res) {
-    articleProvider.save({
-        title:req.param('title'), 
-        body:req.param('body'),
-		tags:req.param('tags'),
-		sourceurl:req.param('sourceurl'),
-		sourceauthor:req.param('sourceauthor'),
-		code:req.param('code')
-    }, function(err, docs) {
-       res.redirect('/'); 
-    });
-});
-
-/*
-By ID loader - may return
-app.get('/article/:id', function(req, res) {
-	articleProvider.findById(req.params.id, function(error, article) {
-		res.render('article', {article:article, title:article.title});
-	});
-});
-*/
 
 app.get('/article/:ses', function(req, res) {
-	articleProvider.findBySES(req.param('ses'), function(error, article) {
+	app.get('articleProvider').findBySES(req.param('ses'), function(error, article) {
 		res.render('article', {article:article, title:"JavaScript Cookbook: " + article.title});
 	});
 });
@@ -106,7 +87,6 @@ app.post('/submit', function(req, res) {
 		req.session.error = 'You must include the title, description, code, your name and email address.';
 		res.redirect('/submit');
 	}
-	console.log(app.get('mailusername'), app.get('mailpassword'));
 	var transport = nodemailer.createTransport("SMTP", {
 		service: 'Gmail', // use well known service
 			auth: {
@@ -153,7 +133,7 @@ app.post('/submit', function(req, res) {
 });
 
 app.get('/tag/:tag', function(req, res) {
-	articleProvider.findByTag(req.param('tag'), function(error, articles) {
+	app.get('articleProvider').findByTag(req.param('tag'), function(error, articles) {
 		res.render('tag', {articles:articles,title:"JavaScript Cookbook: Tag - "+req.params.tag, tag:req.params.tag});
 	});
 });
@@ -185,15 +165,14 @@ app.post('/search', function(req, res) {
 	
 	if(term === '') res.redirect('/');
 	
-	articleProvider.findBySearch(term, function(error, articles) {
+	app.get('articleProvider').findBySearch(term, function(error, articles) {
 		res.render('search', {articles:articles,title:"JavaScript Cookbook: Search", term:term});		
 	});
 	
 });
 
-app.get('/admin', secure, function(req, res) {
-	res.render('admin', {title:'Admin'});	
-});
+app.get('/admin', secure, admin.adminindex);
+app.get('/admin/list', secure, admin.adminlist);
 
 function authenticate(username, password) {
 	return (username === app.get('adminusername') && password === app.get('adminpassword'));

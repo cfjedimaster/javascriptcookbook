@@ -106,14 +106,6 @@ ArticleProvider.prototype.findLatest = function(max,callback) {
 };
 
 ArticleProvider.prototype.generateSESURL = function(title) {
-	/*
-	<cfset arguments.title = replace(arguments.title, "&amp;", "and", "all") />
-	<!---// remove html entities //--->
-	<cfset arguments.title = reReplace(arguments.title, "&[^;]+;", "", "all") />
-	<cfset arguments.title = reReplace(arguments.title,"[^0-9a-zA-Z ]","","all")>
-	<!--- change spaces to - --->
-	<cfset arguments.title = replace(arguments.title," ","-","all")>
-	*/
 	var newTitle = title.replace(/&amp;/g,"");
 	newTitle = newTitle.replace(/&.*?;/g,"");
 	newTitle = newTitle.replace(/[^0-9a-z ]/gi, "");

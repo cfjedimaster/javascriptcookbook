@@ -1,0 +1,59 @@
+
+<h3>Edit</h3>
+
+ <form class="form-horizontal well" method="post" action="/admin/save">
+        <fieldset>
+
+			{{#if article._id}}
+			<input type="hidden" name="_id" value="{{article._id}}">
+			{{/if}}
+			
+			<div class="control-group">
+				<label class="control-label" for="title">Title</label>
+				<div class="controls">
+					<input class="input-xlarge" id="title" name="title" type="text" value="{{article.title}}">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="body">Body</label>
+				<div class="controls">
+					<textarea class="input-xlarge" id="body" name="body" rows="3">{{article.body}}</textarea>
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label" for="tags">Tags</label>
+				<div class="controls">
+					<input class="input-xlarge" id="tags" name="tags" type="text" value="{{article.tags}}">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="sourceurl">Source URL</label>
+				<div class="controls">
+					<input class="input-xlarge" id="sourceurl" name="sourceurl" type="text" value="{{article.sourceurl}}">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="sourceauthor">Source Author</label>
+				<div class="controls">
+					<input class="input-xlarge" id="sourceauthor" name="sourceauthor" type="text" value="{{article.sourceauthor}}">
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label" for="code">Code</label>
+				<div class="controls">
+					<textarea class="input-xlarge" id="code" name="code" rows="3">{{article.code}}</textarea>
+				</div>
+			</div>
+	
+			<div class="form-actions">
+            	<button type="submit" class="btn btn-primary">Save</button>
+			</div>
+			
+		</fieldset>
+	 
+</form>

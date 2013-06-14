@@ -1,0 +1,8 @@
+
+<h3>All Articles</h3>
+		
+{{#each articles}}
+<p>
+	<a href="/admin/edit/{{_id}}">{{title}}</a> - {{dateFormat created_at}}
+</p>
+{{/each}}

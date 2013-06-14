@@ -24,6 +24,16 @@ ArticleProvider = function(host, port) {
 	this.db.open(function(){});
 };
 
+ArticleProvider.prototype.delete = function(id, callback) {
+	this.getCollection(function(error, article_collection) {
+		if(error) callback(error) 
+		else {
+			article_collection.remove({_id:article_collection.db.bson_serializer.ObjectID.createFromHexString(id)},true,function() {
+				callback(null);						   
+		    });
+		}
+	});
+}
 
 ArticleProvider.prototype.getCollection = function(callback) {
 	this.db.collection('articles', function(error, article_collection) {
@@ -74,7 +84,8 @@ ArticleProvider.prototype.findBySearch = function(term, callback) {
 		if( error ) callback(error)
 		else {
 			var reg = new RegExp(term,"i");
-			article_collection.find({$or:[{title: reg},{body:reg}]}).toArray(function(error, results) {				if( error ) callback(error)
+			article_collection.find({$or:[{title: reg},{body:reg}]}).toArray(function(error, results) {				
+				if( error ) callback(error)
 				else callback(null, results)
 			});
 		}
@@ -133,18 +144,18 @@ ArticleProvider.prototype.save = function(article, callback) {
 	this.getCollection(function(error, article_collection) {
 		if( error ) callback(error)
 		else {
-			article.created_at = new Date();
-			if(article.tags.length) {
-				article.tags = article.tags.split(',');	
+			if(!article._id) {
+				article.created_at = new Date();	
+			} else {
+				article._id = article_collection.db.bson_serializer.ObjectID.createFromHexString(article._id);	
 			}
 			article.updated_at = new Date();
-			console.log(article.title, article.sesURL);
-			
-			article_collection.insert(article, function() {
-				callback(null, article);
+			article_collection.save(article, function() {
+				console.log('save');
+				console.dir(article);
+				callback(null, article);										 
+
 			});
-		
-		
 		}
 	});
 };

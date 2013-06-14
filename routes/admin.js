@@ -11,7 +11,6 @@ exports.adminlist = function(req, res) {
 
 exports.articleedit = function(req, res) {
 	var id = req.param('id');
-	console.log('id',id);
 	if(id) {
 		req.app.get('articleProvider').findById(id,function(err, ob) {
 			res.render('articleedit', {title: "Edit Article", article:ob});
@@ -22,14 +21,22 @@ exports.articleedit = function(req, res) {
 };
 
 exports.articlesave = function(req, res) {
-    req.app.get('articleProvider').save({
-        title:req.param('title'), 
-        body:req.param('body'),
-		tags:req.param('tags'),
-		sourceurl:req.param('sourceurl'),
-		sourceauthor:req.param('sourceauthor'),
-		code:req.param('code')
-    }, function(err, docs) {
-       res.redirect('/admin'); 
-    });
+	if(req.param('delete') == 'delete') {
+		req.app.get('articleProvider').delete(req.param('_id'), function(err) {
+			res.redirect('/admin');
+		});
+	} else {
+		req.app.get('articleProvider').save({
+			title:req.param('title'), 
+			body:req.param('body'),
+			tags:req.param('tags'),
+			sourceurl:req.param('sourceurl'),
+			sourceauthor:req.param('sourceauthor'),
+			code:req.param('code'),
+			created_at:req.param('created_at'),
+			_id:req.param('_id')
+		}, function(err, docs) {
+		   res.redirect('/admin'); 
+		});
+	}
 };

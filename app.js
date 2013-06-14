@@ -60,6 +60,7 @@ app.post('/admin/save', secure, admin.articlesave);
 
 app.get('/article/:ses', function(req, res) {
 	app.get('articleProvider').findBySES(req.param('ses'), function(error, article) {
+		console.dir(article);
 		res.render('article', {article:article, title:"JavaScript Cookbook: " + article.title});
 	});
 });

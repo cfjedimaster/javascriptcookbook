@@ -26,10 +26,17 @@ exports.articlesave = function(req, res) {
 			res.redirect('/admin');
 		});
 	} else {
+		//convert tags to an array
+		var tags = req.param('tags');
+		if(tags.length) {
+			tags = tags.split(',');
+		} else {
+			tags = [];	
+		}
 		req.app.get('articleProvider').save({
 			title:req.param('title'), 
 			body:req.param('body'),
-			tags:req.param('tags'),
+			tags:tags,
 			sourceurl:req.param('sourceurl'),
 			sourceauthor:req.param('sourceauthor'),
 			code:req.param('code'),

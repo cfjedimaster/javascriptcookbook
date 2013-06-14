@@ -30,6 +30,6 @@ exports.articlesave = function(req, res) {
 		sourceauthor:req.param('sourceauthor'),
 		code:req.param('code')
     }, function(err, docs) {
-       res.redirect('/'); 
+       res.redirect('/admin'); 
     });
 };

@@ -50,7 +50,7 @@ app.get('/', function(req,res) {
 });
 
 app.get('/about', function(req, res) {
-    res.render('about', { title: "JavaScript Cookbook: About" });    
+    res.render('about', { title: "JavaScript Cookbook: About", aboutpage:true });    
 });
 
 app.get('/admin/edit/:id', secure, admin.articleedit);
@@ -65,11 +65,11 @@ app.get('/article/:ses', function(req, res) {
 });
 
 app.get('/submit', function(req, res) {
-    res.render('submit', { title: "JavaScript Cookbook: Submit" });
+    res.render('submit', { title: "JavaScript Cookbook: Submit", submitpage:true });
 });
 
 app.get('/submitted', function(req, res) {
-    res.render('submitted', { title: "JavaScript Cookbook: Submitted" });
+    res.render('submitted', { title: "JavaScript Cookbook: Submitted", submitpage:true });
 });
 
 app.post('/submit', function(req, res) {

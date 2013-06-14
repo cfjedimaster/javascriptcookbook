@@ -23,8 +23,8 @@
 					<div class="nav-collapse">
 					  <ul class="nav">
 						<li {{#if homepage}}class="active"{{/if}}><a href="/">Home</a></li>
-						<li><a href="/submit">Submit</a></li>
-						<li><a href="/about">About</a></li>
+						<li {{#if submitpage}}class="active"{{/if}}><a href="/submit">Submit</a></li>
+						<li {{#if aboutpage}}class="active"{{/if}}><a href="/about">About</a></li>
 						<!--
 						<li class="dropdown">
 						  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>

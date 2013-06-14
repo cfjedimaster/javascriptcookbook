@@ -19,7 +19,7 @@ Original Location: {{article.sourceurl}}<br/>
 {{#if article.tags}}
 <b>Tags:</b>	
 	{{#each article.tags}}
-	<span class="label label-info">{{.}}</span>
+	<a href="/tag/{{urlFormat .}}"><span class="label label-info">{{.}}</span></a>
 	{{/each}}
 {{/if}}
 </p>

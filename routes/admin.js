@@ -20,6 +20,13 @@ exports.articleedit = function(req, res) {
 	}
 };
 
+exports.dump = function(req, res) {
+	req.app.get('articleProvider').findAll(function(error, articles) {
+		res.send(articles);
+	});
+
+}
+
 exports.articlesave = function(req, res) {
 	if(req.param('delete') == 'delete') {
 		req.app.get('articleProvider').delete(req.param('_id'), function(err) {

@@ -215,6 +215,7 @@ app.post('/search', function(req, res) {
 
 app.get('/admin', secure, admin.adminindex);
 app.get('/admin/list', secure, admin.adminlist);
+app.get('/admin/dump', secure, admin.dump);
 
 function authenticate(username, password) {
 	return (username === app.get('adminusername') && password === app.get('adminpassword'));

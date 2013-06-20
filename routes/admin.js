@@ -23,6 +23,8 @@ exports.articleedit = function(req, res) {
 exports.articlesave = function(req, res) {
 	if(req.param('delete') == 'delete') {
 		req.app.get('articleProvider').delete(req.param('_id'), function(err) {
+			//clear rss cache:
+			req.app.set('rssXML','');
 			res.redirect('/admin');
 		});
 	} else {
@@ -33,6 +35,7 @@ exports.articlesave = function(req, res) {
 		} else {
 			tags = [];	
 		}
+		
 		req.app.get('articleProvider').save({
 			title:req.param('title'), 
 			body:req.param('body'),
@@ -43,7 +46,9 @@ exports.articlesave = function(req, res) {
 			created_at:req.param('created_at'),
 			_id:req.param('_id')
 		}, function(err, docs) {
-		   res.redirect('/admin'); 
+			//clear rss cache:
+			req.app.set('rssXML','');
+			res.redirect('/admin'); 
 		});
 	}
 };

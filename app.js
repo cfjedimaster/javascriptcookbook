@@ -11,6 +11,10 @@ hbs.registerHelper('urlFormat',function(input) {
 	return hbs.handlebars.Utils.escapeExpression(input);
 });
 
+var RSS = require('rss');
+//used for caching
+app.set('rssXML', '');
+
 //Load routes
 var admin = require('./routes/admin');
 
@@ -156,6 +160,43 @@ app.post('/login', function(req, res) {
 	} else {
 		req.session.error = 'Invalid login.';        
 		res.redirect('/login');
+	}
+});
+
+app.get('/rss', function(req, res) {
+	
+	//Do we have a cache for xml?
+	if(app.get('rssXML') != '') {
+		console.log('use cache');
+		res.set('Content-Type','application/rss+xml');
+		res.send(app.get('rssXML'));
+	} else {
+	
+		var feed = new RSS({
+			title: 'JavaScript Cookbook',
+			description: 'A site for answering common JavaScript questions/problems.',
+			feed_url: 'http://www.javascriptcookbook.com/rss',
+			site_url: 'http://www.javascriptcookbook.com',
+			author: 'Raymond Camden'
+		});
+	
+		app.get('articleProvider').findLatest(10,function(err, data) {
+			data.forEach(function(itm) {
+				feed.item({
+					title:  itm.title,
+					description: itm.body,
+					url: 'http://www.javascriptcookbook.com/artice/'+itm.sesURL, 
+					author: itm.sourceAuthor,
+					date: itm.created_at
+				});
+				
+			});
+			res.set('Content-Type','application/rss+xml');
+			app.set('rssXML',feed.xml());
+			res.send(app.get('rssXML'));
+			
+		});
+
 	}
 });
 

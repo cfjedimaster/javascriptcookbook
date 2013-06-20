@@ -7,6 +7,7 @@
         "express":"3.x",
         "hbs":"*",
         "mongodb":">=0.9.6-7",
-		"nodemailer":"*"
+		"nodemailer":"*",
+		"rss":"0.0.4"
     }
 }

@@ -32,6 +32,7 @@ app.configure(function() {
     app.use(express.cookieParser());
     app.use(express.session({secret:'foo'}));
     
+	app.use(express.favicon(__dirname + '/public/favicon.ico'));
 });
 
 app.configure('development', function() {

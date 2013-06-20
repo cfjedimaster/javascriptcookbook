@@ -4,12 +4,16 @@
 {{article.body}}
 </p>
 
+{{#if article.moreinfo}}
+More Information: <a href="{{article.moreinfo}}">{{article.moreinfo}}</a><br/>
+{{/if}}
+
 {{#if article.sourceauthor}}
-Original Author: {{article.sourceauthor}}<br/>
+Author: {{article.sourceauthor}}<br/>
 {{/if}}
 
 {{#if article.sourceurl}}
-Original Location: <a href="{{article.sourceurl}}">{{article.sourceurl}}</a><br/>
+Source: <a href="{{article.sourceurl}}">{{article.sourceurl}}</a><br/>
 {{/if}}
 
 <p/>

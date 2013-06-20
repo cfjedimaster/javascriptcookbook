@@ -151,7 +151,6 @@ ArticleProvider.prototype.save = function(article, callback) {
 			}
 			article.updated_at = new Date();
 			article_collection.save(article, function() {
-				console.log('save');
 				console.dir(article);
 				callback(null, article);										 
 

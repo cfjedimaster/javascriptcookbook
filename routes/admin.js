@@ -43,6 +43,14 @@ exports.articlesave = function(req, res) {
 			tags = [];	
 		}
 		
+		/*
+		I store created_at in the form so that when we update a record,
+		it gets preserved. But I'm storing the toString version by accident.
+		So toDate it when it exists.
+		*/
+		var created_at = req.param('created_at');
+		if(created_at) created_at = new Date(created_at);
+		
 		req.app.get('articleProvider').save({
 			title:req.param('title'), 
 			body:req.param('body'),
@@ -50,7 +58,8 @@ exports.articlesave = function(req, res) {
 			sourceurl:req.param('sourceurl'),
 			sourceauthor:req.param('sourceauthor'),
 			code:req.param('code'),
-			created_at:req.param('created_at'),
+			created_at:created_at,
+			moreinfo:req.param('moreinfo'),
 			_id:req.param('_id')
 		}, function(err, docs) {
 			//clear rss cache:

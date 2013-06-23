@@ -65,8 +65,14 @@ app.post('/admin/save', secure, admin.articlesave);
 
 app.get('/article/:ses', function(req, res) {
 	app.get('articleProvider').findBySES(req.param('ses'), function(error, article) {
-		console.dir(article);
-		res.render('article', {article:article, title:"JavaScript Cookbook: " + article.title});
+		if(error) {
+			res.redirect('/');
+		}
+		if(article == null) {
+			res.redirect('/');
+		} else {
+			res.render('article', {article:article, title:"JavaScript Cookbook: " + article.title});
+		}
 	});
 });
 
@@ -140,7 +146,11 @@ app.post('/submit', function(req, res) {
 
 app.get('/tag/:tag', function(req, res) {
 	app.get('articleProvider').findByTag(req.param('tag'), function(error, articles) {
-		res.render('tag', {articles:articles,title:"JavaScript Cookbook: Tag - "+req.params.tag, tag:req.params.tag});
+		if(articles.length == 0) {
+			res.redirect('/');
+		} else {
+			res.render('tag', {articles:articles,title:"JavaScript Cookbook: Tag - "+req.params.tag, tag:req.params.tag});
+		}
 	});
 });
 
@@ -168,7 +178,6 @@ app.get('/rss', function(req, res) {
 	
 	//Do we have a cache for xml?
 	if(app.get('rssXML') != '') {
-		console.log('use cache');
 		res.set('Content-Type','application/rss+xml');
 		res.send(app.get('rssXML'));
 	} else {

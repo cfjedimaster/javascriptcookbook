@@ -186,7 +186,7 @@ app.get('/rss', function(req, res) {
 				feed.item({
 					title:  itm.title,
 					description: itm.body,
-					url: 'http://www.javascriptcookbook.com/artice/'+itm.sesURL, 
+					url: 'http://www.javascriptcookbook.com/article/'+itm.sesURL, 
 					author: itm.sourceAuthor,
 					date: itm.created_at
 				});

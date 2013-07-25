@@ -132,7 +132,10 @@ ArticleProvider.prototype.getTags = function(callback) {
 		}
 		article_collection.distinct("tags", function(error, result) {
 			if(error) callback(error);
-			else callback(null, result);
+			else {
+				result.sort();
+				callback(null, result);
+			}
 		});
 	});
 }

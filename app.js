@@ -107,17 +107,10 @@ app.post('/submit', function(req, res) {
 			}
 	});
 
-	var message = {
-	
-		// sender info
+	var message = {	
 		from: '"' + yourname +'" <' + youremail +'>',
-	
-		// Comma separated list of recipients
 		to: '"Raymond Camden" <raymondcamden@gmail.com>',
-	
-		// Subject of the message
 		subject: 'JavaScript Cookbook Submission', //
-	
 		text: "Title: "+title + "\n" +
 		"Body: "+body + "\n\n" + 
 		"Code: "+code + "\n\n" + 
@@ -125,7 +118,6 @@ app.post('/submit', function(req, res) {
 		"Source URL: " + sourceurl + "\n" + 
 		"Submitter Name: " + yourname + "\n" + 
 		"Submitter Email: " + youremail + "\n"
-	
 	};	
 
 	transport.sendMail(message, function(error){

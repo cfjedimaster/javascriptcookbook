@@ -47,42 +47,42 @@ are published to the site.
 		<div class="control-group">
 			<label class="control-label" for="yourname">Your Name</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" id="yourname" name="yourname">
+				<input type="text" class="input-xlarge" id="yourname" name="yourname" value="{{yourname}}">
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label" for="youremail">Your Email</label>
 			<div class="controls">
-				<input type="email" class="input-xlarge" id="youremail" name="youremail">
+				<input type="email" class="input-xlarge" id="youremail" name="youremail" value="{{youremail}}">
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label" for="title">Title</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" id="title" name="title">
+				<input type="text" class="input-xlarge" id="title" name="title" value="{{article_title}}">
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label" for="body">Description</label>
 			<div class="controls">
-				<textarea class="input-xlarge" id="body" name="body" style="width:450px;height:120px"></textarea>
+				<textarea class="input-xlarge" id="body" name="body" style="width:450px;height:120px">{{body}}</textarea>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label" for="code">Code</label>
 			<div class="controls">
-				<textarea class="input-xlarge" id="code" name="code" style="width:450px;height:300px;font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;"></textarea>
+				<textarea class="input-xlarge" id="code" name="code" style="width:450px;height:300px;font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;">{{code}}</textarea>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label" for="sourceauthor">Source Author</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" id="sourceauthor" name="sourceauthor">
+				<input type="text" class="input-xlarge" id="sourceauthor" name="sourceauthor" value="{{sourceauthor}}">
 				<p class="help-block">If you are contributing content from someone else, include their name.</p>
 			</div>
 		</div>
@@ -90,7 +90,7 @@ are published to the site.
 		<div class="control-group">
 			<label class="control-label" for="sourceurl">Source URL</label>
 			<div class="controls">
-				<input type="url" class="input-xlarge" id="sourceurl" name="sourceurl">
+				<input type="url" class="input-xlarge" id="sourceurl" name="sourceurl" value="{{sourceurl}}">
 				<p class="help-block">If you are contributing content from someone else, include the URL.</p>
 			</div>
 		</div>
@@ -98,13 +98,21 @@ are published to the site.
 		<div class="control-group">
 			<label class="control-label" for="tags">Tags</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" id="tags" name="tags">
+				<input type="text" class="input-xlarge" id="tags" name="tags" value="{{tags}}">
 				<p class="help-block">Include a comma-separated list of tags.</p>
 			</div>
 		</div>
-		
+
+        <div class="control-group">
+            <div class="controls">
+            {{{recaptcha_form}}}
+            </div>
+        </div>
+
 		<div class="form-actions">
 			<button type="submit" class="btn btn-primary">Submit Article</button>
 		</div>
+        
+        
 	</fieldset>
 </form>

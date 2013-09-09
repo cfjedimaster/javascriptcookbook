@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+var Recaptcha = require('recaptcha').Recaptcha;
+
 var ArticleProvider = require('./articleprovider-mongo').ArticleProvider;
 app.set('articleProvider',new ArticleProvider('localhost',27017));
 
@@ -77,7 +79,18 @@ app.get('/article/:ses', function(req, res) {
 });
 
 app.get('/submit', function(req, res) {
-    res.render('submit', { title: "JavaScript Cookbook: Submit", submitpage:true });
+    if(req.session.error) {
+        res.locals.error = req.session.error;
+        delete req.session.error;
+    }
+    if(req.session.form) {
+        for(var k in req.session.form) {
+            res.locals[k] = req.session.form[k];
+        }
+        delete req.session.form;
+    }
+    var recaptcha = new Recaptcha(app.get('recaptcha_public'), app.get('recaptcha_private'));
+    res.render('submit', { title: "JavaScript Cookbook: Submit", submitpage:true, recaptcha_form:recaptcha.toHTML() });
 });
 
 app.get('/submitted', function(req, res) {
@@ -94,46 +107,71 @@ app.post('/submit', function(req, res) {
 	var youremail = req.param('youremail')
 	var tags = req.param('tags');
 
+    
 	//We have client-side validation, but validate here too for lame browsers
 	if(title === '' || body === '' || code === '' || yourname === '' || youremail === '') {
 		req.session.error = 'You must include the title, description, code, your name and email address.';
 		res.redirect('/submit');
 	}
-	var transport = nodemailer.createTransport("SMTP", {
-		service: 'Gmail', // use well known service
-			auth: {
-				user: app.get('mailusername'),
-				pass: app.get('mailpassword')
-			}
-	});
-
-	var message = {	
-		from: '"' + yourname +'" <' + youremail +'>',
-		to: '"Raymond Camden" <raymondcamden@gmail.com>',
-		subject: 'JavaScript Cookbook Submission', //
-		text: "Title: "+title + "\n" +
-		"Body: "+body + "\n\n" + 
-		"Code: "+code + "\n\n" + 
-		"Source Author: " + sourceauthor + "\n" +
-		"Source URL: " + sourceurl + "\n" + 
-		"Submitter Name: " + yourname + "\n" + 
-		"Submitter Email: " + youremail + "\n"
-	};	
-
-	transport.sendMail(message, function(error){
-		if(error){
-			console.log('Error occured');
-			console.log(error.message);
-			return;
-		}
-		console.log('Message sent successfully!');
-
-		// if you don't want to use this transport object anymore, uncomment following line
-		transport.close(); // close the connection pool
-		
-		res.redirect('/submitted');
-	});
-
+    
+    var data = {
+        remoteip:  req.connection.remoteAddress,
+        challenge: req.body.recaptcha_challenge_field,
+        response:  req.body.recaptcha_response_field
+    };
+    var recaptcha = new Recaptcha(app.get('recaptcha_public'), app.get('recaptcha_private'), data);
+    
+    recaptcha.verify(function(success, error_code) {
+        if(success) {
+            var transport = nodemailer.createTransport("SMTP", {
+                service: 'Gmail', // use well known service
+                    auth: {
+                        user: app.get('mailusername'),
+                        pass: app.get('mailpassword')
+                    }
+            });
+        
+            var message = {	
+                from: '"' + yourname +'" <' + youremail +'>',
+                to: '"Raymond Camden" <raymondcamden@gmail.com>',
+                subject: 'JavaScript Cookbook Submission', //
+                text: "Title: "+title + "\n" +
+                "Body: "+body + "\n\n" + 
+                "Code: "+code + "\n\n" + 
+                "Source Author: " + sourceauthor + "\n" +
+                "Source URL: " + sourceurl + "\n" + 
+                "Submitter Name: " + yourname + "\n" + 
+                "Submitter Email: " + youremail + "\n"
+            };	
+        
+            transport.sendMail(message, function(error){
+                if(error){
+                    console.log('Error occured');
+                    console.log(error.message);
+                    return;
+                }
+                console.log('Message sent successfully!');
+        
+                // if you don't want to use this transport object anymore, uncomment following line
+                transport.close(); // close the connection pool
+                
+                res.redirect('/submitted');
+            });
+        } else {
+            req.session.error = "Invalid CAPTCHA code. Please try again.";
+            req.session.form = {};
+            req.session.form.article_title = title;
+            req.session.form.body = body;
+            req.session.form.code = code;
+            req.session.form.sourceauthor = sourceauthor;
+            req.session.form.sourceurl = sourceurl;
+            req.session.form.yourname = yourname;
+            req.session.form.youremail = youremail;
+            req.session.form.tags = tags;
+            
+            res.redirect('/submit');            
+        }
+    });
 });
 
 app.get('/tag/:tag', function(req, res) {
@@ -243,6 +281,8 @@ fs.readFile('./adminauth.json', 'utf8', function(err, data) {
 	app.set('adminpassword', data.password);
 	app.set('mailusername', data.mailusername);
 	app.set('mailpassword', data.mailpassword);
+    app.set('recaptcha_public', data.recaptcha_public);
+    app.set('recaptcha_private', data.recaptcha_private);
 	app.listen(process.env.VCAP_APP_PORT || 3000);
 });
 
